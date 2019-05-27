@@ -4,6 +4,9 @@ const express = require('express');
 const db = require('./data/db.js');
 
 const server = express();
+
+//middleware 
+//json() returns its own bodyparser
 server.use(express.json());
 
 
@@ -34,39 +37,78 @@ server.get('/', (req, res) => {
       res.send('hold on to your butts..');
 });
 
-//endpoints
+//create endpoints
 //create new user
 server.post('/api/users', (req, res) => {
+      const newUser = req.body;
+      // console.log('req body', req.body)
       db 
-            .insert();
+            .insert(newUser)
+            .then(user => {
+                  res.status(201).json({ user })
+            })
+            .catch(err => {
+                  res.status(500).json({ err: 'could not create new user'})
+            })
 
 });
 
 //get all users
 server.get('/api/users', (req, res) => {
       db
-            .find();
+            .find()
+            .then(users => {
+                  res.status(200).json(users)
+            })
+            .catch(err => {
+                  res.status(500).json({ err: "can't find user" })
+            })
 
 });
 
 //get specific user by id
 server.get('/api/users/:id', (req, res) => {
+      const { id } = req.params.id
       db
-            .findById();
+            .findById(id)
+            .then(user => {
+                  res.status(200).json({ user })
+            })
+            .catch(err => {
+                  res.status(500).json({ err: "couldn't find them"})
+            })
 
 });
 
 //remove specific user by id
 server.delete('/api/users/:id', (req, res) => {
+      const { id } = req.params.id
       db
-            .remove();
+            .remove(id)
+            .then(removedUser => {
+                  res.json(removedUser)
+            })
+            .catch(err => {
+                  res.status(500).json({ err: 'Could not delete' })
+            })
 });
 
 //edit specific user
 server.put('/api/users/:id', (req, res) => {
+      const { id } = req.params.id
       db
-            .update();
-})
+            .update(id)
+            .then(updatedUser => {
+                  if (updatedUser) {
+                        res.json(updatedUser);
+                  } else {
+                        res.status(404).json({ err: 'wrong id' })
+                  }
+            })
+            .catch(err => {
+                  res.status(500).json({ err: 'could not edit' })
+            })
+});
 
 
 server.listen(8000, () => console.log('api running on port 8000'));
