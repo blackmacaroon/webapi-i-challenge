@@ -45,7 +45,7 @@ server.post('/api/users', (req, res) => {
       db 
             .insert(newUser)
             .then(user => {
-                  res.status(201).json({ user })
+                  res.status(201).json({ user }) //201 'created'
             })
             .catch(err => {
                   res.status(500).json({ err: 'could not create new user'})
@@ -61,7 +61,7 @@ server.get('/api/users', (req, res) => {
                   res.status(200).json(users)
             })
             .catch(err => {
-                  res.status(500).json({ err: "can't find user" })
+                  res.status(500).json({ err: "can't find users" })
             })
 
 });
