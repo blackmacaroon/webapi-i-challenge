@@ -44,8 +44,8 @@ server.post('/api/users', (req, res) => {
       // console.log('req body', req.body)
       db 
             .insert(newUser)
-            .then(user => {
-                  res.status(201).json({ user }) //201 'created'
+            .then(newUser => {
+                  res.status(201).json({ newUser }) // 201 'created'
             })
             .catch(err => {
                   res.status(500).json({ err: 'could not create new user'})
@@ -68,7 +68,7 @@ server.get('/api/users', (req, res) => {
 
 //get specific user by id
 server.get('/api/users/:id', (req, res) => {
-      const { id } = req.params.id
+      const id = req.params.id
       db
             .findById(id)
             .then(user => {
@@ -82,11 +82,11 @@ server.get('/api/users/:id', (req, res) => {
 
 //remove specific user by id
 server.delete('/api/users/:id', (req, res) => {
-      const { id } = req.params.id
+      const id = req.params.id
       db
             .remove(id)
             .then(removedUser => {
-                  res.json(removedUser)
+                  res.status(204)   // 204 no content
             })
             .catch(err => {
                   res.status(500).json({ err: 'Could not delete' })
@@ -95,12 +95,13 @@ server.delete('/api/users/:id', (req, res) => {
 
 //edit specific user
 server.put('/api/users/:id', (req, res) => {
-      const { id } = req.params.id
+      const id = req.params.id;
+      const updates = req.body;
       db
-            .update(id)
+            .update(id, updates)
             .then(updatedUser => {
                   if (updatedUser) {
-                        res.json(updatedUser);
+                        res.status(200).json(updatedUser);
                   } else {
                         res.status(404).json({ err: 'wrong id' })
                   }
